@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mari Menanam Sayur!</title>
+    <style>
+        /* Menggunakan font yang kasual dan bersih */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #FDFBF7; /* Warna Putih Gading / Off-White */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Desain Kartu Utama */
+        .card {
+            background-color: #F5EBE0; /* Warna Cream Lembut */
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(141, 125, 105, 0.15);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            border: 4px solid #FFFFFF;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #4A5759;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        p {
+            color: #6B7A7D;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        /* Area Tombol */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            height: 50px;
+            position: relative;
+        }
+
+        .btn {
+            padding: 12px 35px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .btn-oke {
+            background-color: #FFFFFF;
+            color: #38b000;
+            border: 2px solid #38b000;
+        }
+
+        .btn-oke:hover {
+            background-color: #38b000;
+            color: #FFFFFF;
+            transform: scale(1.05);
+        }
+
+        /* Tombol Tidak menggunakan posisi absolut agar bisa berpindah bebas */
+        .btn-tidak {
+            background-color: #7A7F82;
+            color: #FFFFFF;
+            position: absolute;
+            left: 55%; /* Posisi awal di sebelah kanan tombol Oke */
+        }
+
+        /* Pesan Pop-up Sukses */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(74, 87, 89, 0.4);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background-color: #FFFFFF;
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 400px;
+            width: 85%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 4px solid #F5EBE0;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-content h2 {
+            color: #38b000;
+            margin-bottom: 10px;
+        }
+
+        .modal-content p {
+            margin-bottom: 20px;
+        }
+
+        /* Dekorasi Stiker Sayuran (Floating Emojis) */
+        .sticker {
+            position: absolute;
+            font-size: 2.5rem;
+            user-select: none;
+            pointer-events: none;
+            opacity: 0.8;
+            animation: float 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-15px) rotate(10deg); }
+        }
+
+        /* Mengatur posisi stiker di latar belakang */
+        .s1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .s2 { top: 15%; right: 12%; animation-delay: 0.5s; }
+        .s3 { bottom: 15%; left: 15%; animation-delay: 1s; }
+        .s4 { bottom: 12%; right: 10%; animation-delay: 1.5s; }
+        .s5 { top: 45%; left: 5%; animation-delay: 2s; }
+        .s6 { top: 50%; right: 6%; animation-delay: 2.5s; }
+    </style>
+</head>
+<body>
+
+    <!-- Stiker Sayuran di Latar Belakang -->
+    <div class="sticker s1">🌱</div>
+    <div class="sticker s2">🥕</div>
+    <div class="sticker s3">🥦</div>
+    <div class="sticker s4">🍅</div>
+    <div class="sticker s5">🥬</div>
+    <div class="sticker s6">🥔</div>
+
+    <!-- Kartu Interaktif Utama -->
+    <div class="card">
+        <h1>Apakah kamu tertarik untuk mulai menanam sayuran sendiri di rumah? 🏡</h1>
+        <p>Menanam sayur itu seru, sehat, dan bikin hati jadi adem, lho!</p>
+        
+        <div class="btn-container" id="btnContainer">
+            <button class="btn btn-oke" onclick="tampilkanPesan()">Oke</button>
+            <button class="btn btn-tidak" id="btnTidak" onmouseover="hindariTombol()" onclick="hindariTombol()">Tidak</button>
+        </div>
+    </div>
+
+    <!-- Modal Pesan Positif -->
+    <div class="modal" id="modalPesan">
+        <div class="modal-content">
+            <h2>Pilihan yang Hebat! 🎉</h2>
+            <p>Satu benih yang kamu tanam hari ini adalah kontribusi nyata untuk bumi yang lebih hijau dan hidup yang lebih sehat. Selamat berkebun! 🧑‍🌾" </p>
+            <button class="btn btn-oke" onclick="tutupModal()">Siap!</button>
+        </div>
+    </div>
+
+    <script>
+        const btnTidak = document.getElementById('btnTidak');
+        const modalPesan = document.getElementById('modalPesan');
+
+        // Fungsi untuk membuat tombol "Tidak" berpindah posisi secara acak
+        function hindariTombol() {
+            // Mengambil batas ukuran layar browser agar tombol tidak keluar layar
+            const padding = 20;
+            const batasX = window.innerWidth - btnTidak.offsetWidth - padding;
+            const batasY = window.innerHeight - btnTidak.offsetHeight - padding;
+
+            // Menghasilkan koordinat acak
+            const acakX = Math.max(padding, Math.floor(Math.random() * batasX));
+            const acakY = Math.max(padding, Math.floor(Math.random() * batasY));
+
+            // Mengubah posisi tombol menjadi fixed (mengikuti koordinat layar)
+            btnTidak.style.position = 'fixed';
+            btn離開 = false;
+            btnTidak.style.left = acakX + 'px';
+            btnTidak.style.top = acakY + 'px';
+        }
+
+        // Fungsi untuk memunculkan pesan positif saat klik "Oke"
+        function tampilkanPesan() {
+            modalPesan.style.display = 'flex';
+        }
+
+        // Fungsi untuk menutup modal pesan dan mengembalikan posisi tombol
+        function tutupModal() {
+            modalPesan.style.display = 'none';
+            // Reset posisi tombol "Tidak" ke posisi semula di dalam kartu
+            btnTidak.style.position = 'absolute';
+            btnTidak.style.left = '55%';
+            btnTidak.style.top = '0';
+        }
+    </script>
+</body>
+</html>
